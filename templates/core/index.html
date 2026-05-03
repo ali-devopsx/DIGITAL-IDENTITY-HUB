@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Character encoding and viewport for mobile responsiveness -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.name }} - Digital Identity Hub</title>
+    
+    <!-- Meta tags for SEO and social sharing -->
+    <meta name="description" content="{{ profile.bio }}">
+    <meta name="author" content="{{ profile.name }}">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS with dark cyber aesthetic -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Logo/Branding -->
+            <div class="nav-brand">
+                <span class="brand-name">{{ profile.name }}</span>
+            </div>
+            
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link">HOME</a></li>
+                <li><a href="#about" class="nav-link">ABOUT</a></li>
+                <li><a href="#skills" class="nav-link">SKILLS</a></li>
+                <li><a href="#projects" class="nav-link">PROJECTS</a></li>
+                <li><a href="#timeline" class="nav-link">TIMELINE</a></li>
+                <li><a href="#contact" class="nav-link">CONTACT</a></li>
+            </ul>
+            
+            <!-- Hamburger menu for mobile -->
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Animated Typing -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <!-- Profile image -->
+            {% if profile.profile_image %}
+            <img src="{{ profile.profile_image.url }}" alt="Profile" class="profile-image">
+            {% endif %}
+            
+            <!-- Animated typing effect -->
+            <h1 class="typing-text">
+                <span class="static-text">I am </span>
+                <span class="dynamic-text" id="typing"></span>
+            </h1>
+            
+            <!-- Subtitle -->
+            <p class="subtitle">{{ profile.title }}</p>
+            
+            <!-- Social links -->
+            <div class="social-links">
+                {% if profile.github_url %}
+                <a href="{{ profile.github_url }}" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-github"></i>
+                </a>
+                {% endif %}
+                
+                {% if profile.linkedin_url %}
+                <a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                {% endif %}
+                
+                {% if profile.twitter_url %}
+                <a href="{{ profile.twitter_url }}" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                {% endif %}
+                
+                {% if profile.instagram_url %}
+                <a href="{{ profile.instagram_url }}" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Call to action button -->
+            <a href="#contact" class="cta-button">Get In Touch</a>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="scroll-indicator">
+            <span>Scroll to explore</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <p class="bio-text">{{ profile.bio }}</p>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">{{ profile.email }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Location:</span>
+                        <span class="info-value">{{ profile.location }}</span>
+                    </div>
+                    {% if profile.phone %}
+                    <div class="info-item">
+                        <span class="info-label">Phone:</span>
+                        <span class="info-value">{{ profile.phone }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section skills">
+        <div class="container">
+            <h2 class="section-title">Skills</h2>
+            <div class="skills-container">
+                {% for category, skills_list in skills_by_category.items %}
+                <div class="skill-category">
+                    <h3 class="category-title">{{ category|title }}</h3>
+                    <div class="skill-list">
+                        {% for skill in skills_list %}
+                        <div class="skill-item" data-proficiency="{{ skill.get_proficiency_display }}">
+                            <div class="skill-icon">{{ skill.icon }}</div>
+                            <div class="skill-name">{{ skill.name }}</div>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: {% if skill.proficiency == 'beginner' %}25{% elif skill.proficiency == 'intermediate' %}50{% elif skill.proficiency == 'advanced' %}75{% else %}100{% endif %}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section projects">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="projects-grid">
+                {% for project in projects %}
+                <div class="project-card" data-project-id="{{ project.id }}">
+                    {% if project.image %}
+                    <div class="project-image">
+                        <img src="{{ project.image.url }}" alt="{{ project.title }}">
+                        <div class="project-overlay">
+                            <a href="{% url 'core:project_detail' project.slug %}" class="view-btn">
+                                View Project
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="project-content">
+                        <h3 class="project-title">{{ project.title }}</h3>
+                        <p class="project-description">{{ project.description }}</p>
+                        
+                        <div class="project-tech">
+                            {% for tech in project.technologies.split|slice:":5" %}
+                            <span class="tech-tag">{{ tech }}</span>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="project-links">
+                            {% if project.demo_url %}
+                            <a href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer" class="link-btn">
+                                <i class="fas fa-external-link-alt"></i> Demo
+                            </a>
+                            {% endif %}
+                            
+                            {% if project.github_url %}
+                            <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="link-btn">
+                                <i class="fab fa-github"></i> Code
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="timeline" class="section timeline">
+        <div class="container">
+            <h2 class="section-title">Timeline</h2>
+            <div class="timeline-container">
+                {% for entry in timeline %}
+                <div class="timeline-item">
+                    <div class="timeline-marker">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">{{ entry.title }}</h3>
+                            <p class="timeline-org">{{ entry.organization }}</p>
+                            <p class="timeline-date">
+                                {{ entry.start_date|date:"M Y" }}
+                                {% if entry.end_date %}
+                                - {{ entry.end_date|date:"M Y" }}
+                                {% else %}
+                                - Present
+                                {% endif %}
+                            </p>
+                            <p class="timeline-description">{{ entry.description }}</p>
+                            <span class="timeline-type">{{ entry.get_entry_type_display }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section contact">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <p>Have a project in mind or just want to say hello?</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:{{ profile.email }}">{{ profile.email }}</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ profile.location }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <form id="contactForm" class="contact-form">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <input type="text" name="name" id="name" placeholder="Your Name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="email" name="email" id="email" placeholder="Your Email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="text" name="subject" id="subject" placeholder="Subject" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <textarea name="message" id="message" placeholder="Your Message" rows="5" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Send Message</button>
+                    <div class="form-message" id="formMessage"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 {{ profile.name }}. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Files -->
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

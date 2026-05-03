@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Character encoding and viewport for mobile responsiveness -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ project.title }} - Digital Identity Hub</title>
+    
+    <!-- Meta tags for SEO -->
+    <meta name="description" content="{{ project.description }}">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Back link -->
+            <div class="nav-brand">
+                <a href="{% url 'core:index' %}#projects" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Portfolio
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Project Detail Section -->
+    <section class="section project-detail">
+        <div class="container">
+            <!-- Project Header -->
+            <div class="project-header">
+                <h1 class="project-title">{{ project.title }}</h1>
+                <p class="project-date">
+                    {{ project.start_date|date:"M d, Y" }}
+                    {% if project.end_date %}
+                    - {{ project.end_date|date:"M d, Y" }}
+                    {% else %}
+                    - Present
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Project Image -->
+            {% if project.image %}
+            <div class="project-detail-image">
+                <img src="{{ project.image.url }}" alt="{{ project.title }}">
+            </div>
+            {% endif %}
+
+            <!-- Project Content -->
+            <div class="project-detail-content">
+                <!-- Description -->
+                <div class="section-block">
+                    <h2>Overview</h2>
+                    <p>{{ project.description }}</p>
+                    {% if project.long_description %}
+                    <p>{{ project.long_description }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Technologies -->
+                <div class="section-block">
+                    <h2>Technologies Used</h2>
+                    <div class="tech-tags">
+                        {% for tech in project.technologies.split %}
+                        <span class="tech-tag-large">{{ tech }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Project Links -->
+                <div class="section-block project-actions">
+                    {% if project.demo_url %}
+                    <a href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer" class="action-btn demo-btn">
+                        <i class="fas fa-external-link-alt"></i>
+                        View Live Demo
+                    </a>
+                    {% endif %}
+
+                    {% if project.github_url %}
+                    <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="action-btn github-btn">
+                        <i class="fab fa-github"></i>
+                        View on GitHub
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Other Projects Navigation -->
+            {% if all_projects|length > 1 %}
+            <div class="other-projects">
+                <h2>Other Projects</h2>
+                <div class="projects-grid-small">
+                    {% for proj in all_projects %}
+                    {% if proj.id != project.id %}
+                    <a href="{% url 'core:project_detail' proj.slug %}" class="project-link">
+                        <div class="project-link-image">
+                            {% if proj.image %}
+                            <img src="{{ proj.image.url }}" alt="{{ proj.title }}">
+                            {% endif %}
+                        </div>
+                        <div class="project-link-info">
+                            <h3>{{ proj.title }}</h3>
+                        </div>
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Digital Identity Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
